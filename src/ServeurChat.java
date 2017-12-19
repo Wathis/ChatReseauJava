@@ -10,7 +10,7 @@ public class ServeurChat {
 
     private int port;
     private ServerSocket socket;
-    private List<Observateur> clients;
+    private List<Client> clients;
 
 
     public ServeurChat(int port) {
@@ -39,6 +39,24 @@ public class ServeurChat {
         }
     }
 
+    /**
+     * Permet de donner la liste des clients actuellement connectés
+     * @return le toString de la liste des client connectés
+     */
+    public String listeClientConnectes() {
+        StringBuilder str = new StringBuilder();
+        str.append("Membres connectés : \n");
+        for (int i = 0; i < clients.size(); i++) {
+            str.append("\t- " + clients.get(i).getName() + "\n");
+        }
+        return str.toString();
+    }
+
+    /**
+     * Permet d'envoyer un message à tous les clients actuellements connectés
+     * @param exception Client a qui il ne faut pas envoyer le message
+     * @param message Message
+     */
     public void envoyerMessageAuxClients(Client exception, String message) {
         for (int i = 0; i < clients.size(); i++) {
             // Ne pas envoyer a celui passé en parametre ( L'exception est souvent celui qui a envoyé le message )
@@ -46,6 +64,14 @@ public class ServeurChat {
                 clients.get(i).envoyer(message);
             }
         }
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
 }
