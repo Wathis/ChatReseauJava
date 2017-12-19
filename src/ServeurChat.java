@@ -15,7 +15,7 @@ public class ServeurChat {
 
     public ServeurChat(int port) {
         this.port = port;
-        clients = new LinkedList<Observateur>();
+        clients = new LinkedList<Client>();
         try {
             socket = new ServerSocket(port);
         } catch (IOException e) {
