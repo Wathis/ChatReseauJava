@@ -28,7 +28,7 @@ public class Client implements Runnable {
 
     }
 
-    
+
 
     public void envoyer(String msg) {
         try {
