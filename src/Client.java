@@ -9,11 +9,12 @@ public class Client implements Runnable {
     private String nom;
     private BufferedReader input;
     private BufferedWriter output;
+    private ServeurChat serveur;
 
 
-    public Client(Socket socket, String nom) {
+    public Client(Socket socket, ServeurChat serveur) {
         this.socket = socket;
-        this.nom = nom;
+        this.serveur = serveur;
         try {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -25,25 +26,43 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-
+        this.demanderNom();
+        this.communiquerAvecClient();
+        serveur.deconnecterClient(this);
     }
 
+    /**
+     * Boucle permettant de communiquer avec le client
+     */
+    private void communiquerAvecClient() {
+        String message;
+        do {
+            message = ecouter();
+            //On envoie le message a tous les clients connectés, sauf le client actuel
+            serveur.envoyerMessageAuxClients(this, message);
+        } while (!message.equals("/q")); //On quitte quand la reponse du client est "/q"
+    }
+
+    /**
+     * Permet de connaitre le nom du client pour qu'il soit identifie
+     */
+    private void demanderNom() {
+        envoyer("Quel est votre nom ?");
+        this.nom = ecouter();
+    }
 
 
     public void envoyer(String msg) {
         try {
-
             output.write(msg);
             output.flush();
         } catch (java.io.IOException e) {
-
             e.printStackTrace();
         }
     }
 
     public String ecouter() {
         try {
-
             return input.readLine();
         } catch (IOException e) {
             e.printStackTrace();

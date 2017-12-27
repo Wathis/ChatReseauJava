@@ -32,7 +32,7 @@ public class ServeurChat {
             try {
                 Socket socketClient = socket.accept();
                 // Gerer le nouveau client accepté sur un nouveau thread
-                new Thread(new Client(this, socketClient)).start();
+                new Thread(new Client( socketClient,this)).start();
             } catch (IOException e) {
                 System.out.println("Erreur dans l'accept d'un client");
             }
@@ -47,7 +47,7 @@ public class ServeurChat {
         StringBuilder str = new StringBuilder();
         str.append("Membres connectés : \n");
         for (int i = 0; i < clients.size(); i++) {
-            str.append("\t- " + clients.get(i).getName() + "\n");
+            str.append("\t- " + clients.get(i).getNom() + "\n");
         }
         return str.toString();
     }
@@ -64,6 +64,20 @@ public class ServeurChat {
                 clients.get(i).envoyer(message);
             }
         }
+    }
+
+    /**
+     * Permet de deconnecter un client proprement en fermant sa socket
+     * @param client client a deconnecter
+     */
+    public void deconnecterClient(Client client) {
+        this.clients.remove(client);
+        try {
+            client.getSocket().close();
+        } catch (IOException e) {
+            System.out.println("Problème dans la fermeture de " + client.getNom());
+        }
+        envoyerMessageAuxClients(client,client.getNom() + " est maintenant deconnecté");
     }
 
     public int getPort() {
