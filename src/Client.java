@@ -3,7 +3,7 @@ import java.net.Socket;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Client implements Runnable {
+public class Client implements Runnable, IObserver {
 
     private Socket socket;
     private String nom;
@@ -27,6 +27,8 @@ public class Client implements Runnable {
     @Override
     public void run() {
         this.demanderNom();
+        //On enregistre le client auprès du serveur
+        serveur.enregisterClient(this);
         this.communiquerAvecClient();
         serveur.deconnecterClient(this);
     }
@@ -39,7 +41,9 @@ public class Client implements Runnable {
         do {
             message = ecouter();
             //On envoie le message a tous les clients connectés, sauf le client actuel
-            serveur.envoyerMessageAuxClients(this, message);
+            if (!message.equals("/q")) {
+                serveur.envoyerMessageAuxClients(this, "[" + this.nom + "] " + message + "\n");
+            }
         } while (!message.equals("/q")); //On quitte quand la reponse du client est "/q"
     }
 
@@ -47,11 +51,15 @@ public class Client implements Runnable {
      * Permet de connaitre le nom du client pour qu'il soit identifie
      */
     private void demanderNom() {
-        envoyer("Quel est votre nom ?");
+        envoyer("Quel est votre nom ?\n");
         this.nom = ecouter();
     }
 
 
+    /**
+     * Permet d'envoyer un message au client
+     * @param msg
+     */
     public void envoyer(String msg) {
         try {
             output.write(msg);
@@ -61,6 +69,10 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * Permet d'attendre un message du client, methode bloquante
+     * @return
+     */
     public String ecouter() {
         try {
             return input.readLine();
