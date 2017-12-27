@@ -1,8 +1,11 @@
 import java.io.*;
 import java.net.Socket;
-import java.util.Observable;
-import java.util.Observer;
 
+/**
+ * La classe Client represente le client TCP du serveur de chat. Il implemente IObserver pour respecter le patron
+ * observateur. En effet, le client observe le serveur qui le notifie quand un message est arrivé par un autre
+ * client et doit être envoyé au Client connectés.
+ */
 public class Client implements Runnable, IObserver {
 
     private Socket socket;
@@ -11,7 +14,11 @@ public class Client implements Runnable, IObserver {
     private BufferedWriter output;
     private ServeurChat serveur;
 
-
+    /**
+     *  Constructeur du client
+     * @param socket Socket du client
+     * @param serveur Serveur de chat
+     */
     public Client(Socket socket, ServeurChat serveur) {
         this.socket = socket;
         this.serveur = serveur;
@@ -24,6 +31,9 @@ public class Client implements Runnable, IObserver {
         }
     }
 
+    /**
+     * Methode run executée par lors de l'initialisation du Thread du client.
+     */
     @Override
     public void run() {
         this.demanderNom();
@@ -82,6 +92,11 @@ public class Client implements Runnable, IObserver {
         }
     }
 
+
+    /**
+     * Getters et setters
+     * @return
+     */
 
     public Socket getSocket() {
         return socket;

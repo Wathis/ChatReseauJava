@@ -4,15 +4,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
-
+/**
+ * La classe ServeurChat represente le serveur TCP de chat. Il implemente IObservable pour respecter le
+ * patron observateur. Le ServeurChat est l'observé, et les observateurs sont les client du chat TCP ( classe Client )
+ */
 public class ServeurChat implements IObservable {
 
     private int port;
     private ServerSocket socket;
     private List<IObserver> clients;
 
-
+    /**
+     * Constructeur du Serveur de chat
+     * @param port Port sur lequel le serveur de chat doit tourner
+     */
     public ServeurChat(int port) {
         this.port = port;
         clients = new LinkedList<IObserver>();
@@ -24,7 +29,7 @@ public class ServeurChat implements IObservable {
     }
 
     /**
-     * Permet de lancer le serveur de chat et d'accepter les requetes des clients
+     * Permet de lancer le serveur de chat et d'accepter les requetes des clients qui veulent rejoindre le serveur
      */
     public void run() {
         System.out.println("Serveur de chat en écoute sur le port " + port + "...");
@@ -76,6 +81,11 @@ public class ServeurChat implements IObservable {
             }
         }
     }
+
+    /**
+     * Getters et setters
+     * @return
+     */
 
     public int getPort() {
         return port;
