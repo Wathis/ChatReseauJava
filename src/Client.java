@@ -41,10 +41,10 @@ public class Client implements Runnable, IObserver {
         do {
             message = ecouter();
             //On envoie le message a tous les clients connectés, sauf le client actuel
-            if (!message.equals("/q")) {
+            if (!message.equals("bye")) {
                 serveur.envoyerMessageAuxClients(this, "[" + this.nom + "] " + message + "\n");
             }
-        } while (!message.equals("/q")); //On quitte quand la reponse du client est "/q"
+        } while (!message.equals("bye")); //On quitte quand la reponse du client est bye
     }
 
     /**
