@@ -8,11 +8,13 @@ import java.util.List;
  * La classe ServeurChat represente le serveur TCP de chat. Il implemente IObservable pour respecter le
  * patron observateur. Le ServeurChat est l'observé, et les observateurs sont les client du chat TCP ( classe Client )
  */
-public class ServeurChat implements IObservable {
+public class ServeurChat {
 
     private int port;
     private ServerSocket socket;
-    private List<IObserver> clients;
+    private List<Client> clients;
+    private BoiteAuLettres boiteAuLettres;
+    private BoiteEnvoie boiteEnvoie;
 
     /**
      * Constructeur du Serveur de chat
@@ -20,7 +22,9 @@ public class ServeurChat implements IObservable {
      */
     public ServeurChat(int port) {
         this.port = port;
-        clients = new LinkedList<IObserver>();
+        this.boiteAuLettres = new BoiteAuLettres();
+        this.boiteEnvoie = new BoiteEnvoie(boiteAuLettres,this);
+        clients = new LinkedList<Client>();
         try {
             socket = new ServerSocket(port);
         } catch (IOException e) {
@@ -48,9 +52,10 @@ public class ServeurChat implements IObservable {
      * Enregistrer un nouveau client dans les observateurs
      * @param client
      */
-    public void enregisterClient(IObserver client) {
+    public void enregisterClient(Client client) {
         this.clients.add(client);
-        envoyerMessageAuxClients(client,((Client)client).getNom() + " est maintenant connecté\n");
+        boiteAuLettres.put((client).getNom() + " est maintenant connecté\n");
+        boiteEnvoie.envoyerMessage(client);
     }
 
 
@@ -58,34 +63,29 @@ public class ServeurChat implements IObservable {
      * Permet de deconnecter proprement un client
      * @param client
      */
-    public void deconnecterClient(IObserver client) {
+    public void deconnecterClient(Client client) {
         this.clients.remove(client);
         try {
-            ( (Client) client).getSocket().close();
+            client.getSocket().close();
         } catch (IOException e) {
             System.out.println("Problème dans la fermeture de " + ((Client)client).getNom() + "\n");
         }
-        envoyerMessageAuxClients(client,((Client)client).getNom() + " est maintenant deconnecté\n");
-    }
-
-    /**
-     * Permet d'envoyer un message à tous les clients actuellements connectés
-     * @param exception Client a qui il ne faut pas envoyer le message
-     * @param message Message
-     */
-    public void envoyerMessageAuxClients(IObserver exception, String message) {
-        for (int i = 0; i < clients.size(); i++) {
-            // Ne pas envoyer a celui passé en parametre ( L'exception est souvent celui qui a envoyé le message )
-            if (!clients.get(i).equals(exception)) {
-                clients.get(i).envoyer(message);
-            }
-        }
+        boiteAuLettres.put(client.getNom() + " est maintenant deconnecté\n");
+        boiteEnvoie.envoyerMessage(client);
     }
 
     /**
      * Getters et setters
      * @return
      */
+
+    public BoiteAuLettres getBoiteAuxLettres() {return this.boiteAuLettres;}
+
+    public BoiteEnvoie getBoiteEnvoie() {return this.boiteEnvoie;}
+
+    public List<Client> getClients() {
+        return this.clients;
+    }
 
     public int getPort() {
         return port;
