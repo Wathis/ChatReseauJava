@@ -6,7 +6,7 @@ import java.net.Socket;
  * observateur. En effet, le client observe le serveur qui le notifie quand un message est arrivé par un autre
  * client et doit être envoyé au Client connectés.
  */
-public class Client implements Runnable {
+public class Client implements Runnable, IObserver {
 
     private Socket socket;
     private String nom;
@@ -25,7 +25,6 @@ public class Client implements Runnable {
         try {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-
         } catch (java.io.IOException e){
             e.printStackTrace();
         }
@@ -53,7 +52,7 @@ public class Client implements Runnable {
             //On envoie le message a tous les clients connectés, sauf le client actuel
             if (!message.equals("bye")) {
                 serveur.getBoiteAuxLettres().put("[" + this.nom + "] " + message + "\n");
-                serveur.getBoiteEnvoie().envoyerMessage(this);
+                serveur.envoyerMessage(this);
             }
         } while (!message.equals("bye")); //On quitte quand la reponse du client est bye
     }

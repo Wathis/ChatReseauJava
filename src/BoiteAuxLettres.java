@@ -1,4 +1,4 @@
-public class BoiteAuLettres {
+public class BoiteAuxLettres {
 
     private String messageAEnvoyer;
 
