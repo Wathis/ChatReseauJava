@@ -13,6 +13,19 @@ public class Client implements Runnable, IObserver {
     private BufferedReader input;
     private BufferedWriter output;
     private ServeurChat serveur;
+    private final String messageBienvenue = "" +
+            "--------------------------------------------------------\n" +
+            " ______  _                                          \n" +
+            "(____  \\(_)                                         \n" +
+            " ____)  )_ _____ ____ _   _ _____ ____  _   _ _____ \n" +
+            "|  __  (| | ___ |  _ \\ | | | ___ |  _ \\| | | | ___ |\n" +
+            "| |__)  ) | ____| | | \\ V /| ____| | | | |_| | ____|\n" +
+            "|______/|_|_____)_| |_|\\_/ |_____)_| |_|____/|_____)\n" +
+            "                                                    \n" +
+            "--------------------------------------------------------\n" +
+            "Serveur de chat créé par : \n" +
+            "\t- Etienne LEBARILLIER & Mathis DELAUNAY\n" +
+            "--------------------------------------------------------\n";
 
     /**
      *  Constructeur du client
@@ -35,11 +48,22 @@ public class Client implements Runnable, IObserver {
      */
     @Override
     public void run() {
-        this.demanderNom();
+        this.initialisation();
         //On enregistre le client auprès du serveur
         serveur.enregisterClient(this);
         this.communiquerAvecClient();
         serveur.deconnecterClient(this);
+    }
+
+    /**
+     * Permet de presenter le serveur de chat et de demander le nom
+     */
+
+    private void initialisation() {
+        this.envoyer(messageBienvenue);
+        this.demanderNom();
+        String liste = serveur.listePersonnesConnectees();
+        this.envoyer(liste);
     }
 
     /**
@@ -61,7 +85,7 @@ public class Client implements Runnable, IObserver {
      * Permet de connaitre le nom du client pour qu'il soit identifie
      */
     private void demanderNom() {
-        envoyer("Quel est votre nom ?\n");
+        envoyer("Quel est votre nom ?\n> ");
         this.nom = ecouter();
     }
 

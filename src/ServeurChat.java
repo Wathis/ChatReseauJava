@@ -49,6 +49,25 @@ public class ServeurChat implements Runnable, IObservable {
     }
 
     /**
+     * Permet de donner la liste des clients actuellements connéctés au serveur
+     * @return
+     */
+    public String listePersonnesConnectees() {
+        StringBuilder str = new StringBuilder();
+        Iterator iterator = clients.iterator();
+        if (!iterator.hasNext()) {
+            str.append("[INFO] Aucun utilisateur n'est actuellement connecté\n");
+        } else {
+            str.append("[INFO] Liste des utilisateurs connectés :\n");
+            while (iterator.hasNext())  {
+                Client client = (Client) iterator.next();
+                str.append("\t- " + client.getNom() + "\n");
+            }
+        }
+        return str.toString();
+    }
+
+    /**
      * Enregistrer un nouveau client dans les observateurs
      * @param client
      */
@@ -78,7 +97,7 @@ public class ServeurChat implements Runnable, IObservable {
      * Permet d'envoyer un message à tous les clients actuellements connectés
      * @param exception Client a qui il ne faut pas envoyer le message
      */
-    public void envoyerMessage(IObserver exception) {
+    public synchronized void envoyerMessage(IObserver exception) {
         //On recupere le message dans la boite aux lettres
         String message = boiteAuxLettres.get();
         //On l'envoie a tous les clients
