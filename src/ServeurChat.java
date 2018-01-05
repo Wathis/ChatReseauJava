@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
+
 /**
  * La classe ServeurChat represente le serveur TCP de chat. Il implemente IObservable pour respecter le
  * patron observateur. Le ServeurChat est l'observé, et les observateurs sont les client du chat TCP ( classe Client )
@@ -36,6 +38,13 @@ public class ServeurChat implements Runnable, IObservable {
      */
     public void lancer() {
         new Thread(this).start();
+        //On attend la reponse du client
+        String reponse = "";
+        Scanner sc = new Scanner(System.in);
+        do {
+            reponse = sc.nextLine();
+        } while (!reponse.equals("/shutdown"));
+        stop();
     }
 
     /**
