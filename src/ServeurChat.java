@@ -29,7 +29,25 @@ public class ServeurChat implements Runnable, IObservable {
         } catch (IOException e) {
             System.out.println("Erreur dans la création du serveur");
         }
+    }
+
+    /**
+     * Permet de lancer le serveur de chat
+     */
+    public void lancer() {
         new Thread(this).start();
+    }
+
+    /**
+     * Permet de fermer le serveur de chat proprement
+     */
+    public void stop() {
+        Iterator iterator = clients.iterator();
+        //On ferme tous les clients
+        while(iterator.hasNext()) {
+            deconnecterClient((IObserver) iterator.next());
+        }
+        System.exit(0);
     }
 
     /**
