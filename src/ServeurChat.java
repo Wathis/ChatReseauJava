@@ -69,6 +69,8 @@ public class ServeurChat implements Runnable, IObservable {
 
     /**
      * Enregistrer un nouveau client dans les observateurs
+     * Permet de respecter le patron obervateur, ainsi, quand un obervateur sera créé, il devra s'enregistrer auprès
+     * de la classe qu'il observe comme le dit le patron observateur
      * @param client
      */
     public void enregisterClient(IObserver client) {
@@ -80,6 +82,7 @@ public class ServeurChat implements Runnable, IObservable {
 
     /**
      * Permet de deconnecter proprement un client
+     * Permet ainsi a tout observateur d'arrêter d'observer la classe serveur comme le veut le patron observateur
      * @param client
      */
     public void deconnecterClient(IObserver client) {
@@ -95,6 +98,7 @@ public class ServeurChat implements Runnable, IObservable {
 
     /**
      * Permet d'envoyer un message à tous les clients actuellements connectés
+     * Synchronized car un Thread doit executer toute la méthode sans interuptions
      * @param exception Client a qui il ne faut pas envoyer le message
      */
     public synchronized void envoyerMessage(IObserver exception) {
